@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "890461455114",
+    "project_id": "tea-notifications",
+    "storage_bucket": "tea-notifications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890461455114:android:a7b37cb6db6fcd7a75b0f3",
+        "android_client_info": {
+          "package_name": "com.example.sim_teacommerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890461455114-smpel799lajpb8fnqmqkjd1us8alr6pp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmOf9pxHlHtVyiLhUqmN4mtjw5tAhVQaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890461455114-smpel799lajpb8fnqmqkjd1us8alr6pp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
