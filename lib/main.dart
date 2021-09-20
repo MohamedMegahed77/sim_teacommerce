@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sim_teacommerce/splash_screen.dart';
-import 'package:sim_teacommerce/test_signalr.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +17,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
   Get.snackbar("Handling a background message", message.messageId.toString());
 }
-
-
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -39,11 +36,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 3), () {
-      Get.off(const TestSignalr(),
-          transition: Transition.rightToLeftWithFade,
-          duration: const Duration(milliseconds: 780));
-    });
     return GetMaterialApp(
       title: 'ECommerce ',
       debugShowCheckedModeBanner: false,

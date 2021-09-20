@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sim_teacommerce/constants.dart';
 import 'package:sim_teacommerce/controllers/cart_controller.dart';
+import 'package:sim_teacommerce/controllers/usercontroller.dart';
 import 'package:sim_teacommerce/data/data.dart';
 import 'package:sim_teacommerce/models/cart.dart';
 import 'package:sim_teacommerce/models/models.dart';
+import 'package:sim_teacommerce/services/api.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -12,6 +17,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   late List<CartModel> cartList;
+
   double totalCost = 0;
   int cartLength = 0;
 
@@ -23,17 +29,35 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> fetchCartList() async {
-    var getCartList = await Get.find<CartController>().fetchCartList();
-    // ignore: avoid_print
+    var accessToken =
+        Get.find<UserController>().user.value.token.toString().toString();
 
-    setState(() {
-      cartList = getCartList;
-      cartLength = getCartList.length;
+    print("accessToken => $accessToken");
+    var headers = <String, String>{
+      "Authorization": "Bearer $accessToken",
+      'Content-Type': 'application/json',
+    };
 
-      print("initState()  cartList length => " + cartList.length.toString());
+    var response = await API().fetchdata(baseUrlWithoutHttp, cartAll, headers);
 
-      updateTotalCost();
-    });
+    if (response.statusCode == 200) {
+      print("response  => " + response.body.toString());
+      List jsonResponse = json.decode(response.body);
+
+      cartList =
+          jsonResponse.map((element) => CartModel.fromJson(element)).toList();
+
+      setState(() {
+        cartList = cartList;
+        cartLength = cartList.length;
+
+        print("initState()  cartList length => " + cartList.length.toString());
+
+        updateTotalCost();
+      });
+    } else {
+      Get.snackbar("Error", response.headers["ErrorMessage"].toString());
+    }
   }
 
   void updateTotalCost() {
@@ -42,6 +66,28 @@ class _CartScreenState extends State<CartScreen> {
         totalCost += e.total;
       }
     });
+  }
+
+  Future<int> updatecart(int ProductID, int Qty) async {
+    try {
+      var accessToken = Get.find<UserController>().user.value.token.toString();
+      print("accessToken()  => $accessToken ");
+
+      var headers = <String, String>{
+        "Authorization": "Bearer $accessToken",
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+
+      var body = jsonEncode(<String, int>{"productId": ProductID, "qty": Qty});
+
+      var response = await API()
+          .postData(baseUrlWithoutHttp, updateProductCartUrl, headers, body);
+
+      int statusCode = response.statusCode;
+      return statusCode;
+    } catch (e) {
+      return 400;
+    }
   }
 
   Widget _buildCartItem(CartModel cartProduct) {
@@ -107,13 +153,16 @@ class _CartScreenState extends State<CartScreen> {
                       InkWell(
                         child: GestureDetector(
                           onTap: () {
-                            setState(() {
+                            setState(() async {
                               cartProduct.qty = (cartProduct.qty == 1)
                                   ? 1
                                   : (cartProduct.qty - 1);
 
-                              Get.find<CartController>().updateProductCart(
+                              await updatecart(
                                   cartProduct.productID, cartProduct.qty);
+
+                              // Get.find<CartController>().updateProductCart(
+                              //     cartProduct.productID, cartProduct.qty);
 
                               cartProduct.total =
                                   cartProduct.qty * cartProduct.price;
@@ -141,11 +190,13 @@ class _CartScreenState extends State<CartScreen> {
                       InkWell(
                         child: GestureDetector(
                           onTap: () {
-                            setState(() {
+                            setState(() async {
                               cartProduct.qty += 1;
-
-                              Get.find<CartController>().updateProductCart(
+                              await updatecart(
                                   cartProduct.productID, cartProduct.qty);
+
+                              // Get.find<CartController>().updateProductCart(
+                              //     cartProduct.productID, cartProduct.qty);
 
                               cartProduct.total =
                                   cartProduct.qty * cartProduct.price;

@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sim_teacommerce/controllers/cart_controller.dart';
-import 'package:sim_teacommerce/controllers/user_controller.dart';
+import 'package:sim_teacommerce/controllers/usercontroller.dart';
 
 import 'package:sim_teacommerce/models/product.dart';
 
@@ -16,7 +17,6 @@ class ProductDetailsScreen extends StatefulWidget {
   final Product product;
 
   const ProductDetailsScreen({Key? key, required Product product})
-      // ignore: prefer_initializing_formals
       : product = product,
         super(key: key);
 
@@ -27,6 +27,7 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreen extends State<ProductDetailsScreen> {
   int cartQty = 0;
   bool loading = true;
+  String ActionUrl = addtoCart;
 
   @override
   void initState() {
@@ -34,7 +35,31 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
     _fetchProductDetails(widget.product.id);
   }
 
-  Widget _topSectionRestaurantSection(context) {
+  Future<int> adtoCart(int ProductID, int Qty) async {
+    try {
+      var accessToken = Get.find<UserController>().user.value.token.toString();
+      print("accessToken()  => $accessToken ");
+
+      var headers = <String, String>{
+        "Authorization": "Bearer $accessToken",
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+
+      var body = jsonEncode(<String, int>{"productId": ProductID, "qty": Qty});
+
+      var response =
+          await API().postData(baseUrlWithoutHttp, ActionUrl, headers, body);
+
+      ActionUrl = updateProductCartUrl;
+
+      int statusCode = response.statusCode;
+      return statusCode;
+    } catch (e) {
+      return 400;
+    }
+  }
+
+  Widget _topSectionProductDetails(context) {
     return Stack(
       children: [
         Hero(
@@ -78,7 +103,7 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _infoRestaurantSection() {
+  Widget __infoProductDetailsSection() {
     // setState(() {
     //   cartQty = cartQty;
     // });
@@ -126,13 +151,13 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
           const SizedBox(
             height: 8,
           ),
-          Text(
-            widget.product.description,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 10.0,
-            ),
-          ),
+          // Text(
+          //   widget.product.description,
+          //   style: const TextStyle(
+          //     fontWeight: FontWeight.w600,
+          //     fontSize: 10.0,
+          //   ),
+          // ),
           const SizedBox(
             height: 16,
           ),
@@ -177,9 +202,7 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                                     cartQty =
                                         (cartQty == 1) ? 1 : (cartQty - 1);
 
-                                    Get.find<CartController>()
-                                        .updateProductCart(
-                                            widget.product.id, cartQty);
+                                    adtoCart(widget.product.id, cartQty);
                                   });
                                 },
                                 child: const Text(
@@ -206,9 +229,7 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                                   setState(() {
                                     cartQty += 1;
 
-                                    Get.find<CartController>()
-                                        .updateProductCart(
-                                            widget.product.id, cartQty);
+                                    adtoCart(widget.product.id, cartQty);
                                   });
                                 },
                                 child: const Text(
@@ -220,7 +241,6 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                             )
                           ],
                         ),
-                     
                       ),
                     )
                   : SizedBox(
@@ -229,9 +249,7 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                         onPressed: () {
                           setState(() {
                             cartQty += 1;
-                            Get.find<CartController>()
-                                .adtoCart(widget.product.id, cartQty);
-
+                            adtoCart(widget.product.id, cartQty);
                           });
                         },
                         child: const Text("Add To Cart"),
@@ -263,8 +281,8 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _topSectionRestaurantSection(context),
-                      _infoRestaurantSection(),
+                      _topSectionProductDetails(context),
+                      __infoProductDetailsSection(),
                       const SizedBox(
                         height: 10,
                       ),
@@ -282,7 +300,7 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
                         height: 10,
                       ),
 
-                      // _menuItems(context),
+                      //  _menuItems(context),
                     ],
                   ),
                 ),
@@ -297,38 +315,48 @@ class _ProductDetailsScreen extends State<ProductDetailsScreen> {
         loading = true;
       });
 
-      var accessToken = Get.find<UserController>().accessToken.toString();
-      var params = {"ID": id.toString()};
+      var accessToken = Get.find<UserController>().user.value.token.toString();
+      var params = {"id": id.toString()};
 
       print(accessToken.toString());
 
       var response = await API().fetchdatawithParams(baseUrlWithoutHttp,
-          productsDetails, {'accessToken': accessToken}, params);
+          productsDetails, {'Authorization': "Bearer  $accessToken"}, params);
 
       setState(() {
         loading = false;
       });
 
-      print(response.body);
-      var a = json.decode(response.body.toString());
-
-      print("a  =>" + a.toString());
+      var jsonResult = json.decode(response.body.toString());
 
       if (response.statusCode == 200) {
-        productDetails = ProductDetails.fromJson(a);
+        print("jsonResult" + jsonResult["product"].toString());
+
+        // int id = jsonResult["product"]["id"];
+        // int cartQty = jsonResult["product"]["cartQty"];
+        // double price = jsonResult["product"]["price"];
+
+        // int rnd = Random().nextInt(5);
+
+        // print("id $id");
+        // print("cartQty $cartQty");
+        // print("price $price");
+        // print("rnd ${rnd}");
+
+        productDetails = ProductDetails.fromJson(jsonResult["product"]);
+
         setState(() {
           cartQty = productDetails.cartQty;
+          if (cartQty > 0) {
+            ActionUrl = updateProductCartUrl;
+          }
         });
       }
-      print("a  =>" + productDetails.imageUrl);
 
       return productDetails;
     } catch (e) {
-      print("Bad Request Error Message");
-      e.printError();
-      Get.snackbar("title", e.toString());
+      Get.snackbar("Error", e.toString());
     }
-
     return productDetails;
   }
 }

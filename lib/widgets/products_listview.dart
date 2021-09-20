@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sim_teacommerce/controllers/product_controller.dart';
+import 'package:sim_teacommerce/models/product.dart';
 import 'package:sim_teacommerce/screens/product_details.dart';
 
 class ProductsListView extends StatelessWidget {
-  const ProductsListView({Key? key}) : super(key: key);
+  List<Product> products = [];
+
+  ProductsListView({Key? key, required this.products}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget _buildProducts(context) {
       List<Widget> restaurantList = [];
-      Get.find<ProductController>().allProductsList.forEach((product) {
+      this.products.forEach((product) {
         restaurantList.add(GestureDetector(
           onTap: () {
             Get.to(ProductDetailsScreen(product: product));
-            // Get.find<ProductController>().fetchProductDetails(product.id);
           },
-          // onTap: () => Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => RestaurantScreen(
-          //       inputRestaurant: new Restua,
-          //     ),
-          //   ),
-          // ),
           child: Container(
             width: MediaQuery.of(context).size.width,
-            height: 230,
+            height: 140,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
@@ -43,7 +38,7 @@ class ProductsListView extends StatelessWidget {
                       ),
                       child: Image.network(
                         product.imageUrl,
-                        height: 190,
+                        height: 140,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -59,7 +54,7 @@ class ProductsListView extends StatelessWidget {
                       Text(
                         product.name,
                         style: const TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 11.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -82,22 +77,12 @@ class ProductsListView extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        product.price.toString(),
+                        "\$${product.price}",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w600,
                         ),
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w600,
-                        ),
                       ),
                     ],
                   ),
@@ -114,22 +99,21 @@ class ProductsListView extends StatelessWidget {
     }
 
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "All Products",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              _buildProducts(context),
-            ],
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Products",
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+            ),
           ),
-        ));
+          _buildProducts(context),
+        ],
+      ),
+    );
   }
 }

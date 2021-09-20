@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sim_teacommerce/controllers/product_controller.dart';
+import 'package:sim_teacommerce/models/category.dart';
 
 import 'package:sim_teacommerce/models/product.dart';
 
-class BestProducts extends StatelessWidget {
-  // final ProductController _p = Get.put(ProductController());
+class CategoriesListView extends StatelessWidget {
+  List<Category> categories = [];
+  CategoriesListView({required this.categories});
 
-  Widget _buildBestProduct(BuildContext context, Product product) {
-    // final ProductController _p = Get.find<ProductController>();
-    // _p.fetchBestProducts();
-
+  Widget _buildcategoryitem(BuildContext context, Category category) {
     return Container(
       margin: const EdgeInsets.all(10.0),
       width: 320,
@@ -29,7 +28,7 @@ class BestProducts extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
               child: Image.network(
-                product.imageUrl,
+                category.imgUrl,
                 height: 100.0,
                 fit: BoxFit.cover,
               ),
@@ -42,7 +41,7 @@ class BestProducts extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  product.name,
+                  category.name,
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
@@ -52,41 +51,12 @@ class BestProducts extends StatelessWidget {
                 SizedBox(
                   height: 4.0,
                 ),
-                Text(
-                  product.price.toString(),
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
-                  overflow: TextOverflow.ellipsis,
-                ),
                 SizedBox(
                   height: 4.0,
-                ),
-                Row(
-                  children: List.generate(
-                    product.rate,
-                    (index) => Text(
-                      "⭐️ ",
-                      style: TextStyle(
-                        fontSize: 11.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
           ),
-          // Expanded(
-          //   child: CircleAvatar(
-          //     radius: 27.0,
-          //     backgroundColor: Colors.deepOrangeAccent,
-          //     child: Center(
-          //       child: Icon(
-          //         Icons.add,
-          //         color: Colors.white,
-          //       ),
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
@@ -100,7 +70,7 @@ class BestProducts extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
-            "Best Products",
+            "Categories",
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
@@ -111,18 +81,14 @@ class BestProducts extends StatelessWidget {
         Container(
             height: 120,
             padding: EdgeInsets.only(left: 10),
-            child: Obx(
-              () => ListView.builder(
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount:
-                    Get.find<ProductController>().bestproductsList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Product product =
-                      Get.find<ProductController>().bestproductsList[index];
-                  return _buildBestProduct(context, product);
-                },
-              ),
+            child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: this.categories.length,
+              itemBuilder: (BuildContext context, int index) {
+                Category category = this.categories[index];
+                return _buildcategoryitem(context, category);
+              },
             )),
       ],
     );

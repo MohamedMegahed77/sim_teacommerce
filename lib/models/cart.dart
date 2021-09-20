@@ -17,11 +17,11 @@ class CartModel {
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
     return CartModel(
-        productID: json['ProductID'],
-        qty: json['Qty'],
-        name: json['Name'],
-        price: json['Price'],
-        total: json['Total'],
-        imageUrl: json['ImageUrl']);
+        productID: json['productId'],
+        qty: json['qty'],
+        name: json['name'],
+        price: double.parse(json['productPrice'].toString()),
+        total: json['total'],
+        imageUrl: json['productImgUrl']);
   }
 }

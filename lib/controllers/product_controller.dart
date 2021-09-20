@@ -103,22 +103,19 @@ class ProductController extends GetxController {
   Future<List<Product>> searchProducts(String search) async {
     List<Product> searchProducts = [];
 
-    if(search=="")
-    {
+    if (search == "") {
       return searchProducts;
-    }    
+    }
     try {
-
       var headers = <String, String>{
         'Content-Type': 'application/json',
       };
-      
+
       var body = jsonEncode(search);
 
-      var response =await API().postData(baseUrlWithoutHttp, searchProductsUrl, headers, body);
+      var response = await API()
+          .postData(baseUrlWithoutHttp, searchProductsUrl, headers, body);
 
-
-      
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body);
         searchProducts =

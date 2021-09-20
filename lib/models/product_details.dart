@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class ProductDetails {
   late int id;
   late int cartQty;
@@ -25,16 +27,13 @@ class ProductDetails {
 
   factory ProductDetails.fromJson(Map<String, dynamic> json) {
     return ProductDetails(
-      id: json['ID'],
-      cartQty: json['CartQty'],
-      name: json['Name'],
-      fullName: json['FullName'],
-      //description: json['Description'] ?? "",
-      rate: json['Rate'],
-      //categoryName: json['CategoryName'] ?? "",
-      //origin: json['Origin'] ?? "",
-      imageUrl: json['ImageUrl'],
-      price: json['Price'],
+      id: json['id'],
+      cartQty: json['cartQty'],
+      name: json['name'],
+      fullName: json['name'],
+      rate: Random().nextInt(5),
+      imageUrl: json['imgUrl'],
+      price: json['price'],
     );
   }
 }

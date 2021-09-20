@@ -18,10 +18,10 @@ class API extends GetConnect {
   Future<dynamic> fetchdata(baseUrl, burl, headers) async {
     final url = Uri.http('$baseUrl', '$burl');
 
-    print("fetchdata url ()"+url.toString());
+    print("fetchdata url ()" + url.toString());
 
     final response = await http.get(url, headers: headers);
-    print("fetchdata response ()"+response.body.toString());
+    print("fetchdata response ()" + response.body.toString());
 
     if (response.statusCode == 200) {
       return response;
@@ -44,34 +44,21 @@ class API extends GetConnect {
     }
   }
 
-
-  Future<dynamic> postData(baseUrl, burl, headers,body) async {
-    try{
-
+  Future<dynamic> postData(baseUrl, burl, headers, body) async {
+    try {
       final url = Uri.http('$baseUrl', '$burl');
 
+      print("url ()" + url.toString());
 
-    print("url ()"+url.toString());
+      final response = await http.post(url, headers: headers, body: body);
 
-    final response = await http.post(url, headers: headers,body: body);
-
-
-    if (response.statusCode == 200) {
-      return response;
-      
-    } else {
-      response.printError();
-      
-      Get.snackbar("Error", response.headers["ErrorMessage"].toString());
-      return Future.error(response.statusCode);
-    }
-    }catch(e){
-
-      e.printError();
-      
-      Get.snackbar("Error", e.toString());
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return "Error";
     }
   }
-
-
 }

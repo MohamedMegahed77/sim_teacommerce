@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'dart:math';
+
 List<Product> productFromJson(String str) =>
     List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
 
@@ -27,16 +29,27 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // return Product(
+    //     id: json['ID'],
+    //     name: json['Name'],
+    //     fullName: json['FullName'],
+    //     description: json['Description'],
+    //     rate: json['Rate'],
+    //     categoryName: json['CategoryName'],
+    //     origin: json['Origin'],
+    //     imageUrl: json['ImageUrl'],
+    //     price: json['Price']);
+
     return Product(
-        id: json['ID'],
-        name: json['Name'],
-        fullName: json['FullName'],
-        description: json['Description'],
-        rate: json['Rate'],
-        categoryName: json['CategoryName'],
-        origin: json['Origin'],
-        imageUrl: json['ImageUrl'],
-        price: json['Price']);
+        id: json['id'],
+        name: json['name'],
+        fullName: 'FullName',
+        description: "Description",
+        rate: Random().nextInt(5),
+        categoryName: json['categoryName'],
+        origin: 'Origin',
+        imageUrl: json['imgUrl'],
+        price: json['price']);
   }
 
   static Product convertBody(element) {

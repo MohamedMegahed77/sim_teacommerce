@@ -7,6 +7,8 @@ import 'package:signalr_core/signalr_core.dart';
 // import 'package:sim_teacommerce/services/helpers.dart';
 // import 'package:sim_teacommerce/services/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sim_teacommerce/controllers/usercontroller.dart';
+import 'package:sim_teacommerce/models/auth/user.dart';
 
 class TestSignalr extends StatelessWidget {
   const TestSignalr({Key? key}) : super(key: key);
@@ -17,11 +19,21 @@ class TestSignalr extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          child: const Text("Start/Stop Signalr"),
+          child: Text("a"),
           onPressed: () async {
             // FirebaseFirestore.instance
             //     .collection('messages')
             //     .add({'text': 'data added through app'});
+
+            Get.find<UserController>().clearSharedPreferences();
+
+            // Get.find<UserController>().saveUsertoSharedPreferences(User(
+            //     token: "aaa",
+            //     imgUrl: "asd",
+            //     name: "asdasd",
+            //     tokenExpireTime: DateTime.now(),
+            //     userId: 1,
+            //     userName: "aa"));
             try {
               FirebaseFirestore.instance
                   .collection('Users')
@@ -31,8 +43,6 @@ class TestSignalr extends StatelessWidget {
                   print(doc["name"]);
                 });
               });
-
-               
 
               // var snapshots = _fireInstance
               //     .collection('notifications/FtHRFe7sB0djDiabT4dj/messages')
