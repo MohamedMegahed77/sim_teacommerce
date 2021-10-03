@@ -140,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 (Get.find<UserController>().isLoading == false)
                                     ? Text(
-                                        "Sign In",
+                                        "Sign In  ",
                                         style: TextStyle(fontSize: 18),
                                       )
                                     : SpinKitHourGlass(
